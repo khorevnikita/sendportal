@@ -111,7 +111,7 @@ ENV LOG_CHANNEL=stderr
 # Add application
 WORKDIR /var/www/html
 
-COPY --chown=www-data:www-data --from=build-stg /build/ /var/www/html/
+COPY --chown=www-data:www-data ./ /var/www/html/
 #COPY contest/ /var/www/html/
 RUN composer install --optimize-autoloader --no-interaction --no-progress && rm -rf /var/www/html/.composer/cache
 
