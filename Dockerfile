@@ -1,4 +1,4 @@
-FROM php:8.1-fpm AS base
+FROM php:8.0-fpm AS base
 
 ARG APPNAME="SendPortal"
 
@@ -40,7 +40,8 @@ RUN docker-php-ext-install pdo_mysql \
 && docker-php-ext-install pdo_pgsql \
 && docker-php-ext-install gd \
 && docker-php-ext-install zip \
-&& docker-php-ext-install opcache
+&& docker-php-ext-install opcache \
+&& docker-php-ext-install pcntl
 
 RUN apt-get -y install \
             libmagickwand-dev \
