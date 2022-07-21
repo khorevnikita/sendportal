@@ -77,8 +77,8 @@ RUN mkdir /build && chown node:node /build
 COPY --chown=node ./ /build/
 USER node
 WORKDIR /build
-RUN yarn install
-RUN yarn run prod
+#RUN yarn install
+#RUN yarn run prod
 
 FROM base AS run-stg
 
