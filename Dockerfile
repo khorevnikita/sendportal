@@ -1,4 +1,4 @@
-FROM php:8.0-fpm AS base
+FROM php:8.1-fpm AS base
 
 ARG APPNAME="SendPortal"
 
