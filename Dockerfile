@@ -74,7 +74,7 @@ FROM node:12 AS build-stg
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y autoconf libtool pkg-config nasm
 RUN mkdir /build && chown node:node /build
-COPY --chown=node ./contest/ /build/
+COPY --chown=node ./ /build/
 USER node
 WORKDIR /build
 RUN yarn install
