@@ -20,7 +20,7 @@ if [ "$1" == "cron" ]; then
   echo "Run cron instance"
   cd /var/www/html
   echo "Apply migrations"
-  yes | /usr/local/bin/php artisan codenrock:start
+  #yes | /usr/local/bin/php artisan codenrock:start
   yes | /usr/local/bin/php artisan migrate
 
   mkdir -p /var/www/html/storage/logs
