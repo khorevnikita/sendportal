@@ -1,0 +1,132 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${SITE_NAME}
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: ${SITE_NAME}
+  template:
+    metadata:
+      labels:
+        app: ${SITE_NAME}
+    spec:
+      containers:
+        - name: ${SITE_NAME}
+          image: ${IMAGE_NAME}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 1000m
+            requests:
+              cpu: 500m
+          command: ["/entrypoint.sh"]
+        # HACK: ALB has a race condition between deregistering endpoint and pod termination.
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "300"]
+      terminationGracePeriodSeconds: 180
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${SITE_NAME}-cron
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: ${SITE_NAME}
+  template:
+    metadata:
+      labels:
+        app: ${SITE_NAME}
+    spec:
+      containers:
+        - name: ${SITE_NAME}
+          image: ${IMAGE_NAME}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 1000m
+            requests:
+              cpu: 500m
+          command: ["/entrypoint.sh"]
+          args: ["cron"]
+          env:
+          - name: SQS_QUEUE
+            value: ${SQS_QUEUE}
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ${SITE_NAME}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    cert-manager.io/issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+#    nginx.ingress.kubernetes.io/proxy-read-timeout: 180
+#    nginx.ingress.kubernetes.io/rewrite-target: /$2
+#    nginx.ingress.kubernetes.io/upstream-hash-by: $remote_addr
+#    nginx.ingress.kubernetes.io/enable-cors: "true"
+#    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+#    nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS, DELETE"
+#    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,X-LANG,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,X-Api-Key,X-Device-Id,Access-Control-Allow-Origin"
+#    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+#    nginx.ingress.kubernetes.io/cors-expose-headers: "*"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/affinity-mode: "persistent"
+    nginx.ingress.kubernetes.io/session-cookie-name: "route"
+    nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
+    nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+#    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+
+  labels:
+    app: ${SITE_NAME}
+spec:
+  tls:
+    - hosts:
+      - ${HOST_NAME}
+      secretName: ${SITE_NAME}-tls
+  rules:
+    - host: ${HOST_NAME}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: ${SITE_NAME}
+              servicePort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ${SITE_NAME}
+  name: ${SITE_NAME}
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: ${SITE_NAME}
+  type: ClusterIP
