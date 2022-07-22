@@ -22,6 +22,7 @@ if [ "$1" == "cron" ]; then
   echo "Apply migrations"
   #yes | /usr/local/bin/php artisan codenrock:start
   yes | /usr/local/bin/php artisan migrate
+  yes | /usr/local/bin/php artisan sp:publish
 
   mkdir -p /var/www/html/storage/logs
   chmod -R a+w /var/www/html/storage
