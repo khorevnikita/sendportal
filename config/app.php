@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -122,6 +122,10 @@ return [
     'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
+
+    /* READ HOSTS LIST */
+
+    'db_read_hosts' => env('DB_READ_HOSTS') ? explode(',', env('DB_READ_HOSTS')) : [env('DB_HOST')],
 
     /*
     |--------------------------------------------------------------------------
