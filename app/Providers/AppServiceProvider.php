@@ -8,6 +8,7 @@ use App\Models\ApiToken;
 use App\Http\Livewire\Setup;
 use App\Models\User;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use RuntimeException;
@@ -23,8 +24,13 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    public function boot(): void
+    public function boot(UrlGenerator $url): void
     {
+        #if (env('APP_ENV') !== 'local') {
+        #    $url->forceSchema('https');
+        #}
+
+
         Paginator::useBootstrap();
 
         Sendportal::setCurrentWorkspaceIdResolver(
@@ -40,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
                     $workspaceId = ApiToken::resolveWorkspaceId($apiToken);
                 }
 
-                if (! $workspaceId) {
+                if (!$workspaceId) {
                     throw new RuntimeException("Current Workspace ID Resolver must not return a null value.");
                 }
 
