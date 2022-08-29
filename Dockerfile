@@ -27,7 +27,8 @@ RUN apt-get update && apt-get install -y \
         cron \
         sudo \
         librdkafka-dev \
-        libpq-dev
+        libpq-dev \
+        php-redis
 
 ENV TZ=Europe/Moscow
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
