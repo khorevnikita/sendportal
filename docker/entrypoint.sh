@@ -35,4 +35,5 @@ else
   echo "Run ordinary instance"
   sleep 30
   /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+  yes | /usr/local/bin/php artisan sp:publish
 fi
