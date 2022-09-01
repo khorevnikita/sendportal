@@ -9,6 +9,7 @@ use App\Http\Livewire\Setup;
 use App\Models\User;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Routing\UrlGenerator;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use RuntimeException;
@@ -26,9 +27,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(UrlGenerator $url): void
     {
-        #if (env('APP_ENV') !== 'local') {
-        #    $url->forceSchema('https');
-        #}
+        if (env('APP_ENV') !== 'local') {
+            URL::forceScheme('https');
+        }
 
 
         Paginator::useBootstrap();
