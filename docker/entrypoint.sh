@@ -33,7 +33,7 @@ if [ "$1" == "cron" ]; then
   /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.cron.conf
 else
   echo "Run ordinary instance"
+  yes | /usr/local/bin/php artisan sp:publish
   sleep 30
   /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
-  yes | /usr/local/bin/php artisan sp:publish
 fi
