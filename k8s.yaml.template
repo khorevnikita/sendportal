@@ -23,11 +23,6 @@ spec:
           ports:
             - containerPort: 80
               protocol: TCP
-          resources:
-            limits:
-              cpu: 1000m
-            requests:
-              cpu: 500m
           command: ["/entrypoint.sh"]
         # HACK: ALB has a race condition between deregistering endpoint and pod termination.
           lifecycle:
