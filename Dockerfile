@@ -63,7 +63,7 @@ RUN docker-php-ext-install gmp
 
 COPY docker/mysql.list /etc/apt/sources.list.d/mysql.list
 COPY docker/mysql.asc /tmp/mysql.asc
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 467B942D3A79BD29
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys B7B3B788A8D3785C
 RUN apt-key add /tmp/mysql.asc && apt-get update && apt-get install -y mysql-community-client unzip
 #RUN wget https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb
 #RUN dpkg -i mysql-apt-config_0.8.13-1_all.deb && rm mysql-apt-config_0.8.13-1_all.deb && apt-get update && apt-get install -y mysql-community-client unzip
